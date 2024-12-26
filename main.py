@@ -11,7 +11,8 @@ from lxml import etree
 import argparse
 import json
 
-from detect import detect_wordpress
+from detection.wordpress import detect_wordpress
+from detection.version import detect_wordpress_version
 
 regex.DEFAULT_VERSION = regex.VERSION1
 
@@ -43,7 +44,7 @@ def regex_constructor(loader: yaml.Loader, node: yaml.nodes.MappingNode) -> rege
     elif regex_string[-2:] != r'\/' and regex_string[-1:] == '/':
         regex_string = regex_string[:-1]
     
-    return (regex.compile(regex_string))
+    return (regex.compile(regex_string, regex.IGNORECASE))
 
 def load_fingerprints() -> dict:
     with open(DIRECTORY + FINGERPRINTS_FILE) as f:
@@ -108,11 +109,20 @@ def argument_parsing() -> argparse.Namespace:
     
     return (args)
 
+
+def do_something(truc):
+    print(truc)
+
 args = argument_parsing()
 
 is_wordpress = detect_wordpress(args)
 if is_wordpress == True:
     print(f"{args.URL} is a wordpress")
+
+dynamic_finders = load_dynamic_finders()
+#do_something(dynamic_finders)
+
+detect_wordpress_version(args, dynamic_finders['wordpress'])
 
 #if args.fingerprint:
 #    fingerprints = load_fingerprints()
