@@ -43,8 +43,9 @@ class Matcher():
 
         print(matcher_found)
         for match in matcher_found:
-            matched = self.pattern.findall(match)
             print(self.pattern)
+            print(match)
+            matched = self.pattern.findall(match)
             print(matched)
             if matched:
                 self.matched = matched[0]
