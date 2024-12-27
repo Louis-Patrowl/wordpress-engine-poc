@@ -22,10 +22,10 @@ class queryParameterMatcher(Matcher):
         # TODO manage script[src]
         xpath_match = tree.xpath(self.xpath)
         
-        print(xpath_match)
+        #print(xpath_match)
         for i in xpath_match:
             for j in self.files:
                 if j in i:
                     to_return.append(i)
-        print(to_return)
+        #print(to_return)
         return to_return

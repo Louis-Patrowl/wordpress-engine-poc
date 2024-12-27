@@ -7,15 +7,17 @@ class Matcher():
 
     # TODO set regex type
     def __init__(self, **kwargs):
-        self.basepath  =  kwargs.get('basepath', '/')
         self.path  =  kwargs.get('path', '')
         self.pattern =  kwargs.get('pattern', REGEX_ALL)
         self.status_code  =  kwargs.get('status', 200)
     
     def request(self, url: str, requested_dict: dict[str, str], path: str = None) -> httpx.Response:
-        to_request_path = self.basepath + self.path + (path or '')
+        if (self.path):
+            to_request_path = (path or '') + self.path
+        else:
+            to_request_path = ''
         if not to_request_path in requested_dict:
-            print(f"{url}{to_request_path}")
+            #print(f"{url}{to_request_path}")
             response = httpx.get(f"{url}{to_request_path}")
             # TODO error management
             requested_dict[to_request_path] = response
@@ -41,12 +43,8 @@ class Matcher():
         if len(matcher_found) == 0:
             return False
 
-        print(matcher_found)
         for match in matcher_found:
-            print(self.pattern)
-            print(match)
             matched = self.pattern.findall(match)
-            print(matched)
             if matched:
                 self.matched = matched[0]
                 return True

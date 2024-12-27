@@ -3,7 +3,7 @@ from matchers.comment import commentMatcher
 from matchers.javascriptVar import javascriptVarMatcher
 from matchers.header import headerMatcher
 from matchers.queryParameter import queryParameterMatcher
-
+from matchers.bodyPattern import bodyPatternMatcher
 
 
 matcher_list = {
@@ -11,5 +11,6 @@ matcher_list = {
     'JavascriptVar': javascriptVarMatcher,
     'HeaderPattern': headerMatcher,
     'QueryParameter': queryParameterMatcher,
-    'Comment':commentMatcher
+    'Comment':commentMatcher,
+    'BodyPattern': bodyPatternMatcher
 }

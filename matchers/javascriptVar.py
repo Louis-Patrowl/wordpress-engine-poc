@@ -17,7 +17,7 @@ class javascriptVarMatcher(Matcher):
         matched_xpath = tree.xpath(self.xpath)
         if matched_xpath:
             to_return = [x.text for x in matched_xpath]
-            print(to_return[0])
+        #    print(to_return[0])
         return to_return
 
     def config_matcher():

@@ -9,7 +9,7 @@ class configParserMatcher(Matcher):
     def __init__(self, **kwargs):
         if all(k in kwargs for k in self.parameters) == False:
             ## TODO error management
-            print('Key error')
+            #print('Key error')
             ...
         self.path = kwargs['path']
         self.key = kwargs['key']

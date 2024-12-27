@@ -13,6 +13,7 @@ import json
 
 from detection.wordpress import detect_wordpress
 from detection.version import detect_wordpress_version
+from detection.plugins import detect_wordpress_plugins
 
 regex.DEFAULT_VERSION = regex.VERSION1
 
@@ -104,8 +105,8 @@ def argument_parsing() -> argparse.Namespace:
     )
 
     args = parser.parse_args()
-    if args.URL[-1] == '/':
-        args.URL = args.URL[::-1]
+    if args.URL[-1] != '/':
+        args.URL += '/'
     
     return (args)
 
@@ -122,8 +123,8 @@ if is_wordpress == True:
 dynamic_finders = load_dynamic_finders()
 #do_something(dynamic_finders)
 
-detect_wordpress_version(args, dynamic_finders['wordpress'])
-
+#detect_wordpress_version(args, dynamic_finders['wordpress'])
+detect_wordpress_plugins(args, dynamic_finders['plugins'])
 #if args.fingerprint:
 #    fingerprints = load_fingerprints()
 #    print(fingerprints_wp_version(fingerprints, args.mode))

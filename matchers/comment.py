@@ -5,7 +5,7 @@ class commentMatcher(xpathMatcher):
     def __init__(self, **kwargs):
         if not 'xpath' in kwargs:
             kwargs['xpath'] = '//comment()'
-        print(kwargs)
+        #print(kwargs)
         super().__init__(**kwargs)
 
     def matcher_logic(self, response):
