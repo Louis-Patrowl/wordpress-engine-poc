@@ -14,3 +14,13 @@ matcher_list = {
     'Comment':commentMatcher,
     'BodyPattern': bodyPatternMatcher
 }
+
+named_matcher_list = {
+    'Comment': commentMatcher,
+    #'ConfigParser':,
+    'HeaderPattern': headerMatcher,
+    'JavascriptVar': javascriptVarMatcher,
+    'QueryParameter':queryParameterMatcher,
+    'Readme': bodyPatternMatcher,
+    'Xpath': xpathMatcher
+}

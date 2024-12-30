@@ -10,6 +10,7 @@ import regex
 from lxml import etree
 import argparse
 import json
+import jmespath
 
 from detection.wordpress import detect_wordpress
 from detection.version import detect_wordpress_version
@@ -23,7 +24,8 @@ WPSCAN_API = "https://data.wpscan.org/"
 
 FINGERPRINTS_FILE = "wp_fingerprints.json"
 FINDERS_FILE = "dynamic_finders.yml"
-WPSCAN_FILES = [FINGERPRINTS_FILE, FINDERS_FILE] 
+METADATA_FILE = "metadata.json"
+WPSCAN_FILES = [FINGERPRINTS_FILE, FINDERS_FILE, METADATA_FILE] 
 
 
 # Update all files needed using WPSCAN website
@@ -65,6 +67,11 @@ def load_dynamic_finders() -> dict:
         # Load yaml in a variable 
         dynamic_finders = yaml.load(replaced_regex, Loader=yaml.Loader)
     return (dynamic_finders)
+
+def load_metadata():
+    with open("./test_directory/metadata.json") as f:
+        metadata = json.loads(f.read())
+        return (metadata)
 
 def argument_parsing() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Process some inputs.")
@@ -114,27 +121,45 @@ def argument_parsing() -> argparse.Namespace:
 def do_something(truc):
     print(truc)
 
-args = argument_parsing()
 
-is_wordpress = detect_wordpress(args)
-if is_wordpress == True:
-    print(f"{args.URL} is a wordpress")
+if __name__ == "__main__":
+    args = argument_parsing()
+    print(args)
 
-dynamic_finders = load_dynamic_finders()
-#do_something(dynamic_finders)
+    if args.update:
+        update_db()
 
-#detect_wordpress_version(args, dynamic_finders['wordpress'])
-detect_wordpress_plugins(args, dynamic_finders['plugins'])
-#if args.fingerprint:
-#    fingerprints = load_fingerprints()
-#    print(fingerprints_wp_version(fingerprints, args.mode))
-#dynamic_finders = load_dynamic_finders()
+    cached_request = {}
+
+    is_wordpress = detect_wordpress(args, cached_request)
+    if is_wordpress == True:
+        print(f"{args.URL} is a wordpress")
+
+    dynamic_finders = load_dynamic_finders()
+    
+    #for i in dynamic_finders['plugins']:
+    #    for j in dynamic_finders['plugins'][i]:
+    #        if 'class' not in dynamic_finders['plugins'][i][j]:
+    #            print(j)
+    metadata = load_metadata()
+    #args.popular_plugins = jmespath.search("plugins.* | [?popular == `true`]", metadata)
+    args.popular_plugins = [k for k, v in metadata['plugins'].items() if v['popular']]
 
 
-#do_something(dynamic_finders)
+    print(args.popular_plugins)
+    print(len(args.popular_plugins))
+    detect_wordpress_version(args, dynamic_finders['wordpress'], cached_request)
+    detect_wordpress_plugins(args, dynamic_finders['plugins'], cached_request)
+    #if args.fingerprint:
+    #    fingerprints = load_fingerprints()
+    #    print(fingerprints_wp_version(fingerprints, args.mode))
+    #dynamic_finders = load_dynamic_finders()
 
-#r = requests.get(sys.argv[2])
-#tree = etree.fromstring(r.content, etree.HTMLParser())
 
-#print(tree.xpath('//meta[@name="generator"]/@content'))
-#print(dynamic_finders['wordpress'])
+    #do_something(dynamic_finders)
+
+    #r = requests.get(sys.argv[2])
+    #tree = etree.fromstring(r.content, etree.HTMLParser())
+
+    #print(tree.xpath('//meta[@name="generator"]/@content'))
+    #print(dynamic_finders['wordpress'])

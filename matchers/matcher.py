@@ -11,13 +11,16 @@ class Matcher():
         self.pattern =  kwargs.get('pattern', REGEX_ALL)
         self.status_code  =  kwargs.get('status', 200)
     
-    def request(self, url: str, requested_dict: dict[str, str], path: str = None) -> httpx.Response:
+    def request(self, url: str, requested_dict: dict[str, str], path: str = None, status: int = None) -> httpx.Response:
         if (self.path):
             to_request_path = (path or '') + self.path
         else:
             to_request_path = ''
         if not to_request_path in requested_dict:
             #print(f"{url}{to_request_path}")
+            head = httpx.head(f"{url}{to_request_path}")
+            if self.status(head, status) == False:
+                return head
             response = httpx.get(f"{url}{to_request_path}")
             # TODO error management
             requested_dict[to_request_path] = response
@@ -34,7 +37,7 @@ class Matcher():
         pass
 
     def match(self, url: str, requested_dict: dict[str, str], path: str = None, status: int = None) -> bool:
-        response = self.request(url, requested_dict, path)
+        response = self.request(url, requested_dict, path, status)
 
         if self.status(response, status) == False:
             return False

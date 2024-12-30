@@ -5,8 +5,9 @@ import json
 class javascriptVarMatcher(Matcher):
     
     def __init__(self, **kwargs):
+        print(kwargs)
         self.version_key = kwargs.get('version_key', None)
-        self.xpath = kwargs.get('xpath', None)
+        self.xpath = kwargs.get('xpath', '//script[not(@src)]')
         super().__init__(**kwargs)
     
     def xpath_matcher(self, response):
@@ -24,5 +25,5 @@ class javascriptVarMatcher(Matcher):
         ...
 
     def matcher_logic(self, response):
-        if self.xpath:
+        if self.version_key == None:
             return self.xpath_matcher(response)

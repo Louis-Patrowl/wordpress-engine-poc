@@ -29,13 +29,13 @@ def is_wordpress_passive(url: str) -> bool:
 def is_wordpress_aggressive():
     ...
 
-def detect_wordpress(args: dict) :#), cached_webpage: dict) -> bool:
+def detect_wordpress(args: dict, cached_request) :#), cached_webpage: dict) -> bool:
     for finder in WP_DETECT_FINDERS:
         if (finder.match(args.URL, {})):
             return True
     # TODO verify aggressive for path
-    if args.mode == 'aggressive':
-        for finder in WP_DETECT_FINDERS:
-            if (finder.match(args.URL, {}, path='ThisPageDoesntExistPatrowl', status=404)):
-                return True
+    #if args.mode == 'aggressive':
+    #    for finder in WP_DETECT_FINDERS:
+    #        if (finder.match(args.URL, cached_request, path='ThisPageDoesntExistPatrowl', status=404)):
+    #            return True
     return False

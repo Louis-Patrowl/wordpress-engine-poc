@@ -1,29 +1,33 @@
 import httpx
 import regex
-from matchers.matcher_list import matcher_list
+from matchers.matcher_list import matcher_list, named_matcher_list
+import sys
 
+# TODO use finder name instead of class ?
 # TODO modify it with a dict that map class directly to name
-def find_and_match(args, finder, plugin, name):
+def find_and_match(args, finder, plugin, name, cached_request):
     print(f"{plugin}: {name}")
-    if name == 'Readme':
-        to_find = matcher_list['BodyPattern'](**finder)
-    elif name == 'QueryParameter':
-        to_find = matcher_list['QueryParameter'](**finder)
-    elif finder['class'] in matcher_list:
+    if 'class' in finder and finder['class'] in matcher_list:
         to_find = matcher_list[finder['class']](**finder)
+    elif name in named_matcher_list:
+        to_find = named_matcher_list[name](**finder)
     else:
         print(f"{finder['class']} not implemented yet")
         return
     if to_find.match(args.URL, {}, f"/wp-content/plugins/{plugin}"):
-        print(f'Version found for {plugin}: {to_find.matched}')
+        print(f'Version found for {plugin} with {name}: {to_find.matched}')
+        sys.exit(0)
         return True
     return False
 
-def detect_wordpress_plugins(args, finders):
-    for i in finders:
+def detect_wordpress_plugins(args, finders, cached_request):
+    
+    for i in args.popular_plugins:
         #print('-'*20)
         #print(i)
         #print('-'*20)
+        if i not in finders:
+            continue
         for j in finders[i]:
-            find_and_match(args, finders[i][j], i, j)
+            find_and_match(args, finders[i][j], i, j, cached_request)
         #break
