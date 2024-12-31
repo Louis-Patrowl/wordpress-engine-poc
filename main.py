@@ -124,7 +124,7 @@ def do_something(truc):
 
 if __name__ == "__main__":
     args = argument_parsing()
-    print(args)
+    #print(args)
 
     if args.update:
         update_db()
@@ -146,8 +146,8 @@ if __name__ == "__main__":
     args.popular_plugins = [k for k, v in metadata['plugins'].items() if v['popular']]
 
 
-    print(args.popular_plugins)
-    print(len(args.popular_plugins))
+    #print(args.popular_plugins)
+    #print(len(args.popular_plugins))
     detect_wordpress_version(args, dynamic_finders['wordpress'], cached_request)
     detect_wordpress_plugins(args, dynamic_finders['plugins'], cached_request)
     #if args.fingerprint:
