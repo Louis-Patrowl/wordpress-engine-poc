@@ -41,13 +41,20 @@ def update_db():
 # Regex contructor for ruby/regexp
 def regex_constructor(loader: yaml.Loader, node: yaml.nodes.MappingNode) -> regex.Pattern:
     regex_string = loader.construct_scalar(node).lstrip("/")
-    
-    if regex_string[-3:] != r'\/i' and regex_string[-2:] == '/i':
+    splitted_regex = regex_string.split('/')
+    if splitted_regex[-1] == 'i':
         regex_string = regex_string[:-2]
-    elif regex_string[-2:] != r'\/' and regex_string[-1:] == '/':
+        to_return = regex.compile(regex_string, regex.IGNORECASE)
+    elif splitted_regex[-1] == 'mi':
+        regex_string = regex_string[:-3]
+        to_return = regex.compile(regex_string, regex.IGNORECASE | regex.MULTILINE)
+    elif splitted_regex[-1] == '':
         regex_string = regex_string[:-1]
-    
-    return (regex.compile(regex_string, regex.IGNORECASE))
+        to_return = regex.compile(regex_string)
+    else:
+        print('NOT IMPLEMENT REGEX: {regex_string}')
+        sys.exit(0)
+    return (to_return)
 
 def load_fingerprints() -> dict:
     with open(DIRECTORY + FINGERPRINTS_FILE) as f:
@@ -147,7 +154,7 @@ if __name__ == "__main__":
 
 
     #print(args.popular_plugins)
-    #print(len(args.popular_plugins))
+    print(len(args.popular_plugins))
     detect_wordpress_version(args, dynamic_finders['wordpress'], cached_request)
     detect_wordpress_plugins(args, dynamic_finders['plugins'], cached_request)
     #if args.fingerprint:

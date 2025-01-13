@@ -32,10 +32,10 @@ class bodyPatternMatcher(Matcher):
         for i in self.path:
             response = self.request(url, requested_dict, f"{path}/{i}")
             if self.status(response, status) == True:
-                #print(f'Found {path}/{i}')
                 self.detected = True
                 matched = self.pattern.findall(response.text)
-                #print(matched)
+                print(self.pattern)
+                print(matched)
                 if matched:
                     if type(matched[0]) == tuple:
                         self.matched = matched[0][0]

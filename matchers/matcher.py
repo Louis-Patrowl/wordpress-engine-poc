@@ -45,9 +45,9 @@ class Matcher():
         pass
 
     def match(self, url: str, requested_dict: dict[str, str], path: str = None, status: int = None) -> bool:
-        tmptime = testtime("request")
+        #tmptime = testtime("request")
         response = self.request(url, requested_dict, path, status)
-        tmptime.end()
+        #tmptime.end()
 
         if self.status(response, status) == False:
             return False

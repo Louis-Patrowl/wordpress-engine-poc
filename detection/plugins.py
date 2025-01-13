@@ -15,7 +15,7 @@ def find_and_match(args, finder, plugin, name, cached_request):
     else:
         print(f"{finder['class']} not implemented yet")
         return
-    if to_find.match(args.URL, {}, f"/wp-content/plugins/{plugin}"):
+    if to_find.match(args.URL, {}, f"wp-content/plugins/{plugin}"):
         print(f'Version found for {plugin} with {name}: {to_find.matched}')
         #sys.exit(0)
         return True
