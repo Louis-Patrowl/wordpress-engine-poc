@@ -5,18 +5,18 @@ import regex
 
 class javascriptVarMatcher(Matcher):
     
-    def __init__(self, **kwargs):
-        print(kwargs)
+    def __init__(self, name=None, **kwargs):
+        #print(kwargs)
         self.version_key = kwargs.get('version_key', None)
         self.xpath = kwargs.get('xpath', '//script[not(@src)]')
         if self.version_key:
             self.pattern_config = kwargs['pattern']
             kwargs['pattern'] = regex.compile('.*')
-        super().__init__(**kwargs)
+        super().__init__(name=name, **kwargs)
     
-    def xpath_matcher(self, response):
+    async def xpath_matcher(self, response):
         to_return = []
-        tree = etree.fromstring(response.text, etree.HTMLParser())
+        tree = etree.fromstring(self.content, etree.HTMLParser())
          
          # TODO manage script[src]
         matched_xpath = tree.xpath(self.xpath)
@@ -25,17 +25,18 @@ class javascriptVarMatcher(Matcher):
         #    print(to_return[0])
         return to_return
 
-    def config_matcher(self,response):
+    async def config_matcher(self,response):
         to_return = []
-        variable = self.pattern_config.findall(response.text)
+        variable = self.pattern_config.findall(self.content)
         if variable:
             json_variable = json.loads('{' + variable[0] + '}')
             if self.version_key in json_variable:
                 to_return = [json_variable[self.version_key]]
         return to_return
 
-    def matcher_logic(self, response):
+    async def matcher_logic(self, response):
         if self.version_key == None:
-            return self.xpath_matcher(response)
+            print('this')
+            return await self.xpath_matcher(response)
         else:
-            return self.config_matcher(response)
+            return await self.config_matcher(response)

@@ -3,21 +3,29 @@ import regex
 from matchers.matcher_list import matcher_list
 
 # TODO modify it with a dict that map class directly to name
-def find_and_match(args, finder, cached_request):
+async def find_and_match(args, finder):
     #print(finder['class'])
     if finder['class'] in matcher_list:
-        to_find = matcher_list[finder['class']](**finder)
+        to_find = matcher_list[finder['class']](name=None, **finder)
     else:
         print(f"{finder['class']} not implemented yet")
-        return
-    if to_find.match(args.URL, cached_request):
-        print(f'Version found: {to_find.matched}')
-        return True
+        return False
+    if await to_find.match(args.URL):
+        print(f'Wordpress version found: {to_find.version}')
+        return (to_find.version)
     return False
 
-def detect_wordpress_version(args, finders, cached_request):
+async def detect_wordpress_version(args, finders):
+    print(f"--- WP VERSION --- ")
+    to_return = []
     for i in finders:
+        if finders[i]['class'] == 'BodyPattern':
+            continue
         #print('-'*20)
         #print(i)
         #print('-'*20)
-        find_and_match(args, finders[i], cached_request)
+        print(i)
+        detected = await find_and_match(args, finders[i])
+        if detected:
+            to_return.append({'method': f"{i} ({finders[i]['class']})", 'version': detected}) 
+    return to_return

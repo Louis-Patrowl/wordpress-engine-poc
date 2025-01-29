@@ -11,8 +11,17 @@ from lxml import etree
 import argparse
 import json
 import jmespath
+from packaging.specifiers import SpecifierSet
+from packaging.version import Version
+from colorama import init
+from termcolor import colored
+import json
+from pymongo import MongoClient
+import asyncio
+init()
 
 from detection.wordpress import detect_wordpress
+from detection.path import detect_path
 from detection.version import detect_wordpress_version
 from detection.plugins import detect_wordpress_plugins
 
@@ -22,11 +31,57 @@ DIRECTORY = './test_directory/'
 
 WPSCAN_API = "https://data.wpscan.org/"
 
+WORDFENCE_API = "https://www.wordfence.com/api/intelligence/v2/vulnerabilities/production"
 FINGERPRINTS_FILE = "wp_fingerprints.json"
 FINDERS_FILE = "dynamic_finders.yml"
 METADATA_FILE = "metadata.json"
 WPSCAN_FILES = [FINGERPRINTS_FILE, FINDERS_FILE, METADATA_FILE] 
 
+from_version = '*'
+from_inclusive = True
+to_version = '5.9'
+to_inclusive = True
+
+def get_version_range(version):
+    # Constructing the specifier string
+    for i in version:
+        version = version[i]
+        break
+    specifier = ""
+
+    # Handling the lower bound
+
+    if version['from_version'] == '*':
+        specifier += ""
+    elif version['from_inclusive']:
+        specifier += f">={version['from_version']}"
+    else:
+        specifier += f">{version['from_version']}"
+    # Handling the upper bound
+    if version['to_inclusive']:
+        specifier += f",<={version['to_version']}"
+    else:
+        specifier += f",<{version['to_version']}"
+    return SpecifierSet(specifier)
+
+def connect_to_db():
+    client = MongoClient("mongodb://admin:password@localhost:27017/")  # Adjust the connection string as needed
+    db = client["wordpress_vulnerabilities"]  # Database name
+    collection = db["vulnerabilities"]  # Collection name
+    return collection
+
+def initialize_db(collection):
+    r = requests.get(WORDFENCE_API)
+    #print(r.text)
+    data = json.loads(r.text)
+    # MongoDB expects a list of documents for insertion
+    documents = [value for key, value in data.items()]
+    collection.insert_many(documents)
+    print(f"Inserted {len(documents)} documents into the collection.")
+
+def query_vulnerabilities_by_plugin(collection, plugin_name):
+    results = collection.find({"software.slug": plugin_name})
+    return list(results)
 
 # Update all files needed using WPSCAN website
 def update_db():
@@ -107,12 +162,12 @@ def argument_parsing() -> argparse.Namespace:
  #       action="store_true",
  #       help="If specified, set the update flag to True."
  #   )    
- #   parser.add_argument(
- #       "-m", "--mode",
- #       choices=["passive", "aggressive"],
- #       default="passive",
- #       help="Specify the mode ('passive' by default)",
- #   )
+    parser.add_argument(
+        "-m", "--mode",
+        choices=["passive", "aggressive", "mixed"],
+        default="mixed",
+        help="Specify the mode ('mixed' by default)",
+    )
     parser.add_argument(
         "URL",
         help="The mandatory URL argument."
@@ -129,34 +184,56 @@ def do_something(truc):
     print(truc)
 
 
-if __name__ == "__main__":
+async def main():
     args = argument_parsing()
-    #print(args)
+    print(args)
 
     if args.update:
         update_db()
 
-    cached_request = {}
-
-    is_wordpress = detect_wordpress(args, cached_request)
+    is_wordpress = await detect_wordpress(args)
     if is_wordpress == True:
         print(f"{args.URL} is a wordpress")
-
+    else:
+        print(f"{args.URL} is not a wordpress")
+        sys.exit(0)
+    content_dir = await detect_path(args)
+    print(content_dir)
     dynamic_finders = load_dynamic_finders()
-    
-    #for i in dynamic_finders['plugins']:
-    #    for j in dynamic_finders['plugins'][i]:
-    #        if 'class' not in dynamic_finders['plugins'][i][j]:
-    #            print(j)
     metadata = load_metadata()
-    #args.popular_plugins = jmespath.search("plugins.* | [?popular == `true`]", metadata)
     args.popular_plugins = [k for k, v in metadata['plugins'].items() if v['popular']]
+    
+    version_detection = await detect_wordpress_version(args, dynamic_finders['wordpress'])
+    plugins_detection = await detect_wordpress_plugins(args, dynamic_finders['plugins'], content_dir)
+    collection = connect_to_db()
+    collection.delete_many({})
+    initialize_db(collection)
+    print(f"--- WP VERSION --- ")
+    for i in version_detection:
+        print(f"Wordpress {colored(i['version'], 'green')} detected by {colored(i['method'], 'light_blue')}")
+    print(f"--- WP PLUGINS --- ")
+    for i in plugins_detection:
+        print(colored(i, 'cyan'))
+        version_found = None
+        for j in plugins_detection[i]:
+            print(f"Version {colored(j['version'], 'green')} detected by {colored(j['method'], 'light_blue')} ")
+            if j['version'] != None:
+                if version_found == None:
+                    version_found = j['version']
+                elif version_found != j['version']:
+                    print(colored(f"ERROR {i}: VERSION FOUND ARE NOT THE SAME", 'red'))
+        if version_found != None:
+            to_check = Version(version_found)
+            test_vuln = query_vulnerabilities_by_plugin(collection, i)
+            for j in test_vuln:
+                #print(j["id"], j["title"])
+                version_range = get_version_range(j["software"][0]["affected_versions"])
+                if to_check in version_range:
+                    print(colored(f"VULN: {j['title']}", 'red'))    
 
+if __name__ == "__main__":
+    asyncio.run(main())
 
-    #print(args.popular_plugins)
-    print(len(args.popular_plugins))
-    detect_wordpress_version(args, dynamic_finders['wordpress'], cached_request)
-    detect_wordpress_plugins(args, dynamic_finders['plugins'], cached_request)
     #if args.fingerprint:
     #    fingerprints = load_fingerprints()
     #    print(fingerprints_wp_version(fingerprints, args.mode))
@@ -164,9 +241,9 @@ if __name__ == "__main__":
 
 
     #do_something(dynamic_finders)
-
-    #r = requests.get(sys.argv[2])
-    #tree = etree.fromstring(r.content, etree.HTMLParser())
-
-    #print(tree.xpath('//meta[@name="generator"]/@content'))
-    #print(dynamic_finders['wordpress'])
+#
+    ##r = requests.get(sys.argv[2])
+    ##tree = etree.fromstring(r.content, etree.HTMLParser())
+#
+    ##print(tree.xpath('//meta[@name="generator"]/@content'))
+    ##print(dynamic_finders['wordpress'])

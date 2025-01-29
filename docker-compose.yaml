@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:6.0  # Use the latest stable MongoDB version
+    container_name: mongodb_container
+    restart: always
+    ports:
+      - "27017:27017"  # Expose MongoDB on localhost
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin  # Default admin username
+      MONGO_INITDB_ROOT_PASSWORD: password  # Default admin password
+    volumes:
+      - mongo_data:/data/db  # Persistent storage for MongoDB data
+      - mongo_config:/data/configdb  # Persistent storage for config
+
+volumes:
+  mongo_data:
+  mongo_config:
