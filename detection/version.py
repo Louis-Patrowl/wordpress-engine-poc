@@ -19,7 +19,7 @@ async def detect_wordpress_version(args, finders):
     print(f"--- WP VERSION --- ")
     to_return = []
     for i in finders:
-        if finders[i]['class'] == 'BodyPattern':
+        if 'path' in finders[i]:
             continue
         #print('-'*20)
         #print(i)

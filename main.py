@@ -25,6 +25,8 @@ from detection.path import detect_path
 from detection.version import detect_wordpress_version
 from detection.plugins import detect_wordpress_plugins
 
+from vulnerabilies.vulnerabilities import vulnerabilities_checker
+
 regex.DEFAULT_VERSION = regex.VERSION1
 
 DIRECTORY = './test_directory/'
@@ -79,9 +81,7 @@ def initialize_db(collection):
     collection.insert_many(documents)
     print(f"Inserted {len(documents)} documents into the collection.")
 
-def query_vulnerabilities_by_plugin(collection, plugin_name):
-    results = collection.find({"software.slug": plugin_name})
-    return list(results)
+
 
 # Update all files needed using WPSCAN website
 def update_db():
@@ -212,24 +212,8 @@ async def main():
     for i in version_detection:
         print(f"Wordpress {colored(i['version'], 'green')} detected by {colored(i['method'], 'light_blue')}")
     print(f"--- WP PLUGINS --- ")
-    for i in plugins_detection:
-        print(colored(i, 'cyan'))
-        version_found = None
-        for j in plugins_detection[i]:
-            print(f"Version {colored(j['version'], 'green')} detected by {colored(j['method'], 'light_blue')} ")
-            if j['version'] != None:
-                if version_found == None:
-                    version_found = j['version']
-                elif version_found != j['version']:
-                    print(colored(f"ERROR {i}: VERSION FOUND ARE NOT THE SAME", 'red'))
-        if version_found != None:
-            to_check = Version(version_found)
-            test_vuln = query_vulnerabilities_by_plugin(collection, i)
-            for j in test_vuln:
-                #print(j["id"], j["title"])
-                version_range = get_version_range(j["software"][0]["affected_versions"])
-                if to_check in version_range:
-                    print(colored(f"VULN: {j['title']}", 'red'))    
+    vulnerabilities_checker(plugins_detection, collection)
+       
 
 if __name__ == "__main__":
     asyncio.run(main())
