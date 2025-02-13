@@ -31,11 +31,10 @@ class Matcher():
 
 
     # TODO set regex type
-    def __init__(self, name=None, **kwargs):
+    def __init__(self, **kwargs):
         self.path  =  kwargs.get('path', '')
         self.pattern =  kwargs.get('pattern', REGEX_ALL)
         self.status_code  =  kwargs.get('status', [200])
-        self.name = name
         self.detected = False
         self.version = None
         self.content = ""
@@ -43,10 +42,7 @@ class Matcher():
 
 
     async def request(self, url: str, path: str = None, status: int = None):
-        if (self.path):
-            to_request_path = (path or '') + self.path
-        else:
-            to_request_path = ''
+        to_request_path = path or self.path
         head = await Matcher.cached_head_request(f"{url}{to_request_path}")
         if self.status(head, status) == False:
             return head, ""

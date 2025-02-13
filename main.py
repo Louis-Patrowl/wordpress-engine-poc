@@ -1,48 +1,33 @@
 #!/usr/bin/python3
 
-import xml.etree
-import requests
-import os
-import shutil
-import yaml
 import sys
 import regex
-from lxml import etree
 import argparse
 import json
-import jmespath
-from packaging.specifiers import SpecifierSet
-from packaging.version import Version
-from colorama import init
 from termcolor import colored
 import json
+import colorama
 from pymongo import MongoClient
 import asyncio
-init()
+from loader import load_dynamic_finders
+import os
+from dotenv import load_dotenv
+
+colorama.init()
 
 from detection.wordpress import detect_wordpress
 from detection.path import detect_path
 from detection.version import detect_wordpress_version
 from detection.plugins import detect_wordpress_plugins
+from packaging.specifiers import SpecifierSet
 
-from vulnerabilies.vulnerabilities import vulnerabilities_checker
+from vulnerabilities import vulnerabilities_checker
+
+from update import update_wordfence, update_wpscan
 
 regex.DEFAULT_VERSION = regex.VERSION1
 
-DIRECTORY = './test_directory/'
 
-WPSCAN_API = "https://data.wpscan.org/"
-
-WORDFENCE_API = "https://www.wordfence.com/api/intelligence/v2/vulnerabilities/production"
-FINGERPRINTS_FILE = "wp_fingerprints.json"
-FINDERS_FILE = "dynamic_finders.yml"
-METADATA_FILE = "metadata.json"
-WPSCAN_FILES = [FINGERPRINTS_FILE, FINDERS_FILE, METADATA_FILE] 
-
-from_version = '*'
-from_inclusive = True
-to_version = '5.9'
-to_inclusive = True
 
 def get_version_range(version):
     # Constructing the specifier string
@@ -67,68 +52,15 @@ def get_version_range(version):
     return SpecifierSet(specifier)
 
 def connect_to_db():
-    client = MongoClient("mongodb://admin:password@localhost:27017/")  # Adjust the connection string as needed
-    db = client["wordpress_vulnerabilities"]  # Database name
-    collection = db["vulnerabilities"]  # Collection name
-    return collection
+    MONGODB = os.getenv('MONGODB')
+    db = MongoClient("mongodb://admin:password@localhost:27017/")  # Adjust the connection string as needed    
+    return db
 
-def initialize_db(collection):
-    r = requests.get(WORDFENCE_API)
-    #print(r.text)
-    data = json.loads(r.text)
-    # MongoDB expects a list of documents for insertion
-    documents = [value for key, value in data.items()]
-    collection.insert_many(documents)
-    print(f"Inserted {len(documents)} documents into the collection.")
-
-
-
-# Update all files needed using WPSCAN website
-def update_db():
-    if os.path.exists(DIRECTORY):
-        shutil.rmtree(DIRECTORY)
-    os.mkdir(DIRECTORY)
-    for i in WPSCAN_FILES:
-        r = requests.get(WPSCAN_API + i)
-        with open(DIRECTORY + i, "wb") as f:
-            f.write(r.content)
-
-# Regex contructor for ruby/regexp
-def regex_constructor(loader: yaml.Loader, node: yaml.nodes.MappingNode) -> regex.Pattern:
-    regex_string = loader.construct_scalar(node).lstrip("/")
-    splitted_regex = regex_string.split('/')
-    if splitted_regex[-1] == 'i':
-        regex_string = regex_string[:-2]
-        to_return = regex.compile(regex_string, regex.IGNORECASE)
-    elif splitted_regex[-1] == 'mi':
-        regex_string = regex_string[:-3]
-        to_return = regex.compile(regex_string, regex.IGNORECASE | regex.MULTILINE)
-    elif splitted_regex[-1] == '':
-        regex_string = regex_string[:-1]
-        to_return = regex.compile(regex_string)
-    else:
-        print('NOT IMPLEMENT REGEX: {regex_string}')
-        sys.exit(0)
-    return (to_return)
 
 def load_fingerprints() -> dict:
     with open(DIRECTORY + FINGERPRINTS_FILE) as f:
         fingerprints = json.loads(f.read())
     return (fingerprints)
-
-
-# Load dynamic finders in a dict from WPSCAN db file
-def load_dynamic_finders() -> dict:
-    # Add a regex constructor for the yaml parser
-    yaml.add_constructor('!ruby/regexp', regex_constructor)
-
-    with open(DIRECTORY + FINDERS_FILE) as f:
-        # Read the dynamic finders file and replace ruby regex with python regex
-        replaced_regex = f.read().replace('(?<', '(?P<').replace(r'\z',r'\Z(?<!\n)').replace('^/', '')
-
-        # Load yaml in a variable 
-        dynamic_finders = yaml.load(replaced_regex, Loader=yaml.Loader)
-    return (dynamic_finders)
 
 def load_metadata():
     with open("./test_directory/metadata.json") as f:
@@ -185,11 +117,17 @@ def do_something(truc):
 
 
 async def main():
+    load_dotenv()
     args = argument_parsing()
+    
     print(args)
 
+    db = connect_to_db()
+    collection = db["wordpress_vulnerabilities"]["vulnerabilities"]  # Database name
+
     if args.update:
-        update_db()
+        update_wpscan()
+        update_wordfence(collection)
 
     is_wordpress = await detect_wordpress(args)
     if is_wordpress == True:
@@ -205,14 +143,13 @@ async def main():
     
     version_detection = await detect_wordpress_version(args, dynamic_finders['wordpress'])
     plugins_detection = await detect_wordpress_plugins(args, dynamic_finders['plugins'], content_dir)
-    collection = connect_to_db()
-    collection.delete_many({})
-    initialize_db(collection)
     print(f"--- WP VERSION --- ")
     for i in version_detection:
         print(f"Wordpress {colored(i['version'], 'green')} detected by {colored(i['method'], 'light_blue')}")
     print(f"--- WP PLUGINS --- ")
     vulnerabilities_checker(plugins_detection, collection)
+
+    db.close()
        
 
 if __name__ == "__main__":

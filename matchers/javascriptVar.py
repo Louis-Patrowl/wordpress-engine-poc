@@ -5,14 +5,14 @@ import regex
 
 class javascriptVarMatcher(Matcher):
     
-    def __init__(self, name=None, **kwargs):
+    def __init__(self, **kwargs):
         #print(kwargs)
         self.version_key = kwargs.get('version_key', None)
         self.xpath = kwargs.get('xpath', '//script[not(@src)]')
         if self.version_key:
             self.pattern_config = kwargs['pattern']
             kwargs['pattern'] = regex.compile('.*')
-        super().__init__(name=name, **kwargs)
+        super().__init__(**kwargs)
     
     async def xpath_matcher(self, response):
         to_return = []
@@ -36,7 +36,7 @@ class javascriptVarMatcher(Matcher):
 
     async def matcher_logic(self, response):
         if self.version_key == None:
-            print('this')
+            #print('this')
             return await self.xpath_matcher(response)
         else:
             return await self.config_matcher(response)

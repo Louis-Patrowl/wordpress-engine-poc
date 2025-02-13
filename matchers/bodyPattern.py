@@ -5,13 +5,13 @@ import regex
 import asyncio
 
 class bodyPatternMatcher(Matcher):
-    def __init__(self, name=None, **kwargs):
+    def __init__(self,  **kwargs):
         if type(kwargs['path']) == str:
             kwargs['path'] = [kwargs['path']]
         if 'readme.txt' in kwargs['path']:
             kwargs['pattern'] = regex.compile('\\b(?:stable tag|version):\\s*(?!trunk)([0-9a-z.-]+)|^=+\s+(?:v(?:ersion)?\\s*)?([0-9.-]+)[^=]*=+$', regex.IGNORECASE)
         kwargs['status'] = [200, 403]
-        super().__init__(name=name, **kwargs)
+        super().__init__(**kwargs)
 
     async def matcher_logic(self, response):
         return [self.content]

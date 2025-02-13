@@ -5,13 +5,13 @@ class xpathMatcher(Matcher):
     
     parameters = ['xpath']
     
-    def __init__(self, name=None, **kwargs):
+    def __init__(self, **kwargs):
         if all(k in kwargs for k in self.parameters) == False:
             ## TODO error management
             print('Key error')
             ...
         self.xpath = kwargs['xpath']
-        super().__init__(name=name, **kwargs)
+        super().__init__(**kwargs)
     
     async def matcher_logic(self, response) -> list[str]:
          tree = etree.fromstring(self.content, etree.HTMLParser())

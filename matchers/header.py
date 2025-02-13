@@ -6,13 +6,13 @@ class headerMatcher(Matcher):
     
     parameters = ['header']
     
-    def __init__(self, name=None, **kwargs):
+    def __init__(self, **kwargs):
         if all(k in kwargs for k in self.parameters) == False:
             ## TODO error management
             print('Key error')
             ...
         self.header = kwargs['header']
-        super().__init__(name=name, **kwargs)
+        super().__init__(**kwargs)
     
     async def matcher_logic(self, response: httpx.Response) -> list[str]:
         to_return = []
