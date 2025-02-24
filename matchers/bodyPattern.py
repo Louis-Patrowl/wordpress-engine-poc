@@ -8,7 +8,7 @@ class bodyPatternMatcher(Matcher):
     def __init__(self,  **kwargs):
         if type(kwargs['path']) == str:
             kwargs['path'] = [kwargs['path']]
-        if 'readme.txt' in kwargs['path']:
+        if any('readme.txt' == path.lower() for path in kwargs['path']):
             kwargs['pattern'] = regex.compile('\\b(?:stable tag|version):\\s*(?!trunk)([0-9a-z.-]+)|^=+\s+(?:v(?:ersion)?\\s*)?([0-9.-]+)[^=]*=+$', regex.IGNORECASE)
         kwargs['status'] = [200, 403]
         super().__init__(**kwargs)
@@ -30,8 +30,6 @@ class bodyPatternMatcher(Matcher):
             if self.status(response, status) == True:
                 self.detected = True
                 matched = self.pattern.findall(self.content)
-                #print(self.pattern)
-                #print(matched)
                 if matched:
                     if type(matched[0]) == tuple:
                         self.version = matched[0][0]

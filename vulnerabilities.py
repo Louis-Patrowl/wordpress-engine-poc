@@ -35,13 +35,13 @@ def get_version_range(version):
 def query_vulnerabilities_by_plugin(collection, plugin_name):
     results = collection.find({"software.slug": plugin_name})
     return list(results)
-
+import sys
 def vulnerabilities_checker(plugins_detection, collection):
     print(plugins_detection)
     for i in plugins_detection:
             print(colored(i, 'cyan'))
             version_found = None
-            for j in plugins_detection[i]:
+            for j in plugins_detection[i]['finders']:
                 print(f"Version {colored(j['version'], 'green')} detected by {colored(j['method'], 'light_blue')} ")
                 if j['version'] != None:
                     if version_found == None:
@@ -55,7 +55,7 @@ def vulnerabilities_checker(plugins_detection, collection):
                     #print(j["id"], j["title"])
                     version_range = get_version_range(j["software"][0]["affected_versions"])
                     if to_check in version_range:
-                        print(colored(f"{j['cvss']['rating'].ljust(8)}: {j['cve'].ljust(15)} - {j['title']}", color_severity[j['cvss']['rating']]), end=' ')
+                        print(colored(f"{j['cvss']['rating'].ljust(8)}: {j['cve'].ljust(15) if j['cve'] else 'NO CVE'.ljust(15)} - {j['title']}", color_severity[j['cvss']['rating']]), end=' ')
                         if 'PR:N' in j['cvss']['vector']:
                             print(colored('(UNAUTH)', 'cyan', attrs=['bold'])) 
                         else:

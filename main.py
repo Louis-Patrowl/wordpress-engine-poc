@@ -9,9 +9,11 @@ import json
 import colorama
 from pymongo import MongoClient
 import asyncio
-from loader import load_dynamic_finders
+from loader import load_wordpress_finders, load_plugin_finders
 import os
 from dotenv import load_dotenv
+from test_time import testtime
+import sqlite3
 
 colorama.init()
 
@@ -23,7 +25,7 @@ from packaging.specifiers import SpecifierSet
 
 from vulnerabilities import vulnerabilities_checker
 
-from update import update_wordfence, update_wpscan
+from update import update_wordfence, update_wpscan, update_dynamic_finders
 
 regex.DEFAULT_VERSION = regex.VERSION1
 
@@ -124,10 +126,14 @@ async def main():
 
     db = connect_to_db()
     collection = db["wordpress_vulnerabilities"]["vulnerabilities"]  # Database name
+    conn = sqlite3.connect(DIRECTORY + 'finders.db')
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
 
     if args.update:
         update_wpscan()
         update_wordfence(collection)
+        update_dynamic_finders(cursor)
 
     is_wordpress = await detect_wordpress(args)
     if is_wordpress == True:
@@ -137,12 +143,20 @@ async def main():
         sys.exit(0)
     content_dir = await detect_path(args)
     print(content_dir)
-    dynamic_finders = load_dynamic_finders()
+    time1 = testtime('finders wp')
+    wordpress_finders = load_wordpress_finders()
+    time1.end()
+    time1 = testtime('finders wp')
+    plugins_finder = load_plugin_finders()
+    time1.end()
+    time2 = testtime('metadata')
     metadata = load_metadata()
+    time2.end()
     args.popular_plugins = [k for k, v in metadata['plugins'].items() if v['popular']]
     
-    version_detection = await detect_wordpress_version(args, dynamic_finders['wordpress'])
-    plugins_detection = await detect_wordpress_plugins(args, dynamic_finders['plugins'], content_dir)
+    version_detection = await detect_wordpress_version(args, wordpress_finders)
+    plugins_detection = await detect_wordpress_plugins(args, plugins_finder, content_dir)
+    
     print(f"--- WP VERSION --- ")
     for i in version_detection:
         print(f"Wordpress {colored(i['version'], 'green')} detected by {colored(i['method'], 'light_blue')}")
@@ -153,7 +167,22 @@ async def main():
        
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    #asyncio.run(main())
+    load_dotenv()
+    test1 = testtime('update')
+    update_dynamic_finders()
+    test1.end()
+
+    DIRECTORY = os.getenv('DIRECTORY')
+
+
+    test2 = testtime('wp')
+    load_wordpress_finders(cursor)
+    test2.end()
+    test3 = testtime('plugins')
+    load_plugin_finders(cursor)
+    test3.end()
+    conn.close()
 
     #if args.fingerprint:
     #    fingerprints = load_fingerprints()

@@ -1,0 +1,770 @@
+WPSCAN
+
+{
+  "banner": {
+    "description": "WordPress Security Scanner by the WPScan Team",
+    "version": "3.8.27",
+    "authors": [
+      "@_WPScan_",
+      "@ethicalhack3r",
+      "@erwan_lr",
+      "@firefart"
+    ],
+    "sponsor": "Sponsored by Automattic - https://automattic.com/"
+  },
+  "start_time": 1739972748,
+  "start_memory": 53248000,
+  "target_url": "https://www.stsupery.com/",
+  "target_ip": "143.110.157.185",
+  "effective_url": "https://www.stsupery.com/",
+  "interesting_findings": [
+    {
+      "url": "https://www.stsupery.com/",
+      "to_s": "Headers",
+      "type": "headers",
+      "found_by": "Headers (Passive Detection)",
+      "confidence": 100,
+      "confirmed_by": {
+
+      },
+      "references": {
+
+      },
+      "interesting_entries": [
+        "server: nginx",
+        "x-tec-api-version: v1",
+        "x-tec-api-root: https://www.stsupery.com/wp-json/tribe/events/v1/",
+        "x-tec-api-origin: https://www.stsupery.com"
+      ]
+    },
+    {
+      "url": "https://www.stsupery.com/robots.txt",
+      "to_s": "robots.txt found: https://www.stsupery.com/robots.txt",
+      "type": "robots_txt",
+      "found_by": "Robots Txt (Aggressive Detection)",
+      "confidence": 100,
+      "confirmed_by": {
+
+      },
+      "references": {
+
+      },
+      "interesting_entries": [
+        "/wp-admin/",
+        "/wp-admin/admin-ajax.php"
+      ]
+    },
+    {
+      "url": "https://www.stsupery.com/readme.html",
+      "to_s": "WordPress readme found: https://www.stsupery.com/readme.html",
+      "type": "readme",
+      "found_by": "Direct Access (Aggressive Detection)",
+      "confidence": 100,
+      "confirmed_by": {
+
+      },
+      "references": {
+
+      },
+      "interesting_entries": [
+
+      ]
+    },
+    {
+      "url": "https://www.stsupery.com/wp-content/mu-plugins/",
+      "to_s": "This site has 'Must Use Plugins': https://www.stsupery.com/wp-content/mu-plugins/",
+      "type": "mu_plugins",
+      "found_by": "Direct Access (Aggressive Detection)",
+      "confidence": 80,
+      "confirmed_by": {
+
+      },
+      "references": {
+        "url": [
+          "http://codex.wordpress.org/Must_Use_Plugins"
+        ]
+      },
+      "interesting_entries": [
+
+      ]
+    },
+    {
+      "url": "https://www.stsupery.com/wp-cron.php",
+      "to_s": "The external WP-Cron seems to be enabled: https://www.stsupery.com/wp-cron.php",
+      "type": "wp_cron",
+      "found_by": "Direct Access (Aggressive Detection)",
+      "confidence": 60,
+      "confirmed_by": {
+
+      },
+      "references": {
+        "url": [
+          "https://www.iplocation.net/defend-wordpress-from-ddos",
+          "https://github.com/wpscanteam/wpscan/issues/1299"
+        ]
+      },
+      "interesting_entries": [
+
+      ]
+    }
+  ],
+  "version": {
+    "number": "5.8.10",
+    "release_date": "2024-06-24",
+    "status": "outdated",
+    "found_by": "Rss Generator (Aggressive Detection)",
+    "confidence": 100,
+    "interesting_entries": [
+      "https://www.stsupery.com/feed/, <generator>https://wordpress.org/?v=5.8.10</generator>",
+      "https://www.stsupery.com/comments/feed/, <generator>https://wordpress.org/?v=5.8.10</generator>"
+    ],
+    "confirmed_by": {
+
+    },
+    "vulnerabilities": [
+
+    ]
+  },
+  "main_theme": {
+    "slug": "stsupery",
+    "location": "https://www.stsupery.com/wp-content/themes/stsupery/",
+    "latest_version": null,
+    "last_updated": null,
+    "outdated": false,
+    "readme_url": false,
+    "directory_listing": false,
+    "error_log_url": "https://www.stsupery.com/wp-content/themes/stsupery/error_log",
+    "style_url": "https://www.stsupery.com/wp-content/themes/stsupery/style.css?ver=1698081177",
+    "style_name": null,
+    "style_uri": null,
+    "description": null,
+    "author": null,
+    "author_uri": null,
+    "template": null,
+    "license": null,
+    "license_uri": null,
+    "tags": null,
+    "text_domain": null,
+    "found_by": "Css Style In Homepage (Passive Detection)",
+    "confidence": 100,
+    "interesting_entries": [
+
+    ],
+    "confirmed_by": {
+      "Css Style In 404 Page (Passive Detection)": {
+        "confidence": 70,
+        "interesting_entries": [
+
+        ]
+      }
+    },
+    "vulnerabilities": [
+
+    ],
+    "version": null,
+    "parents": [
+
+    ]
+  },
+  "plugins": {
+    "add-to-any": {
+      "slug": "add-to-any",
+      "location": "https://www.stsupery.com/wp-content/plugins/add-to-any/",
+      "latest_version": "1.8.13",
+      "last_updated": "2024-11-21T23:44:00.000Z",
+      "outdated": true,
+      "readme_url": null,
+      "directory_listing": null,
+      "error_log_url": null,
+      "found_by": "Urls In Homepage (Passive Detection)",
+      "confidence": 100,
+      "interesting_entries": [
+
+      ],
+      "confirmed_by": {
+        "Urls In 404 Page (Passive Detection)": {
+          "confidence": 80,
+          "interesting_entries": [
+
+          ]
+        }
+      },
+      "vulnerabilities": [
+
+      ],
+      "version": {
+        "number": "1.8.9",
+        "confidence": 100,
+        "found_by": "Readme - Stable Tag (Aggressive Detection)",
+        "interesting_entries": [
+          "https://www.stsupery.com/wp-content/plugins/add-to-any/README.txt"
+        ],
+        "confirmed_by": {
+          "Readme - ChangeLog Section (Aggressive Detection)": {
+            "confidence": 50,
+            "interesting_entries": [
+              "https://www.stsupery.com/wp-content/plugins/add-to-any/README.txt"
+            ]
+          }
+        }
+      }
+    },
+    "advanced-coupons-for-woocommerce-free": {
+      "slug": "advanced-coupons-for-woocommerce-free",
+      "location": "https://www.stsupery.com/wp-content/plugins/advanced-coupons-for-woocommerce-free/",
+      "latest_version": "4.6.4",
+      "last_updated": "2025-01-27T01:29:00.000Z",
+      "outdated": true,
+      "readme_url": null,
+      "directory_listing": null,
+      "error_log_url": null,
+      "found_by": "Urls In Homepage (Passive Detection)",
+      "confidence": 100,
+      "interesting_entries": [
+
+      ],
+      "confirmed_by": {
+        "Urls In 404 Page (Passive Detection)": {
+          "confidence": 80,
+          "interesting_entries": [
+
+          ]
+        }
+      },
+      "vulnerabilities": [
+
+      ],
+      "version": {
+        "number": "4.5.1.1",
+        "confidence": 80,
+        "found_by": "Readme - Stable Tag (Aggressive Detection)",
+        "interesting_entries": [
+          "https://www.stsupery.com/wp-content/plugins/advanced-coupons-for-woocommerce-free/readme.txt"
+        ],
+        "confirmed_by": {
+
+        }
+      }
+    },
+    "awsm-team-pro": {
+      "slug": "awsm-team-pro",
+      "location": "https://www.stsupery.com/wp-content/plugins/awsm-team-pro/",
+      "latest_version": "1.11.3",
+      "last_updated": "2024-12-13T18:31:45.000Z",
+      "outdated": false,
+      "readme_url": null,
+      "directory_listing": null,
+      "error_log_url": null,
+      "found_by": "Urls In Homepage (Passive Detection)",
+      "confidence": 100,
+      "interesting_entries": [
+
+      ],
+      "confirmed_by": {
+        "Urls In 404 Page (Passive Detection)": {
+          "confidence": 80,
+          "interesting_entries": [
+
+          ]
+        }
+      },
+      "vulnerabilities": [
+
+      ],
+      "version": null
+    },
+    "content-views-query-and-display-post-page": {
+      "slug": "content-views-query-and-display-post-page",
+      "location": "https://www.stsupery.com/wp-content/plugins/content-views-query-and-display-post-page/",
+      "latest_version": "4.0.2",
+      "last_updated": "2024-11-20T09:05:00.000Z",
+      "outdated": true,
+      "readme_url": null,
+      "directory_listing": null,
+      "error_log_url": null,
+      "found_by": "Urls In Homepage (Passive Detection)",
+      "confidence": 100,
+      "interesting_entries": [
+
+      ],
+      "confirmed_by": {
+        "Urls In 404 Page (Passive Detection)": {
+          "confidence": 80,
+          "interesting_entries": [
+
+          ]
+        }
+      },
+      "vulnerabilities": [
+
+      ],
+      "version": {
+        "number": "3.6.3",
+        "confidence": 100,
+        "found_by": "Query Parameter (Passive Detection)",
+        "interesting_entries": [
+          "https://www.stsupery.com/wp-content/plugins/content-views-query-and-display-post-page/public/assets/css/cv.css?ver=3.6.3",
+          "https://www.stsupery.com/wp-content/plugins/content-views-query-and-display-post-page/public/assets/js/cv.js?ver=3.6.3"
+        ],
+        "confirmed_by": {
+          "Readme - Stable Tag (Aggressive Detection)": {
+            "confidence": 80,
+            "interesting_entries": [
+              "https://www.stsupery.com/wp-content/plugins/content-views-query-and-display-post-page/README.txt"
+            ]
+          }
+        }
+      }
+    },
+    "dotdigital-for-woocommerce": {
+      "slug": "dotdigital-for-woocommerce",
+      "location": "https://www.stsupery.com/wp-content/plugins/dotdigital-for-woocommerce/",
+      "latest_version": "1.4.5",
+      "last_updated": "2024-11-04T14:58:00.000Z",
+      "outdated": true,
+      "readme_url": null,
+      "directory_listing": null,
+      "error_log_url": null,
+      "found_by": "Urls In Homepage (Passive Detection)",
+      "confidence": 100,
+      "interesting_entries": [
+
+      ],
+      "confirmed_by": {
+        "Urls In 404 Page (Passive Detection)": {
+          "confidence": 80,
+          "interesting_entries": [
+
+          ]
+        }
+      },
+      "vulnerabilities": [
+
+      ],
+      "version": {
+        "number": "1.4.0",
+        "confidence": 100,
+        "found_by": "Readme - Stable Tag (Aggressive Detection)",
+        "interesting_entries": [
+          "https://www.stsupery.com/wp-content/plugins/dotdigital-for-woocommerce/readme.txt"
+        ],
+        "confirmed_by": {
+          "Readme - ChangeLog Section (Aggressive Detection)": {
+            "confidence": 50,
+            "interesting_entries": [
+              "https://www.stsupery.com/wp-content/plugins/dotdigital-for-woocommerce/readme.txt"
+            ]
+          }
+        }
+      }
+    },
+    "gravityforms": {
+      "slug": "gravityforms",
+      "location": "https://www.stsupery.com/wp-content/plugins/gravityforms/",
+      "latest_version": "2.9.2.3",
+      "last_updated": "2025-01-23T00:00:00.000Z",
+      "outdated": true,
+      "readme_url": null,
+      "directory_listing": null,
+      "error_log_url": null,
+      "found_by": "Urls In Homepage (Passive Detection)",
+      "confidence": 100,
+      "interesting_entries": [
+
+      ],
+      "confirmed_by": {
+        "Urls In 404 Page (Passive Detection)": {
+          "confidence": 80,
+          "interesting_entries": [
+
+          ]
+        }
+      },
+      "vulnerabilities": [
+
+      ],
+      "version": {
+        "number": "2.8.18",
+        "confidence": 100,
+        "found_by": "Query Parameter (Passive Detection)",
+        "interesting_entries": [
+          "https://www.stsupery.com/wp-content/plugins/gravityforms/js/jquery.json.min.js?ver=2.8.18",
+          "https://www.stsupery.com/wp-content/plugins/gravityforms/js/gravityforms.min.js?ver=2.8.18",
+          "https://www.stsupery.com/wp-content/plugins/gravityforms/js/conditional_logic.min.js?ver=2.8.18",
+          "https://www.stsupery.com/wp-content/plugins/gravityforms/js/placeholders.jquery.min.js?ver=2.8.18"
+        ],
+        "confirmed_by": {
+          "Change Log (Aggressive Detection)": {
+            "confidence": 60,
+            "interesting_entries": [
+              "https://www.stsupery.com/wp-content/plugins/gravityforms/change_log.txt, Match: '### 2.8.18'"
+            ]
+          }
+        }
+      }
+    },
+    "iThemeland-Woocommerce-Advanced-Product-Labels": {
+      "slug": "iThemeland-Woocommerce-Advanced-Product-Labels",
+      "location": "https://www.stsupery.com/wp-content/plugins/iThemeland-Woocommerce-Advanced-Product-Labels/",
+      "latest_version": null,
+      "last_updated": null,
+      "outdated": false,
+      "readme_url": null,
+      "directory_listing": null,
+      "error_log_url": null,
+      "found_by": "Urls In Homepage (Passive Detection)",
+      "confidence": 100,
+      "interesting_entries": [
+
+      ],
+      "confirmed_by": {
+        "Urls In 404 Page (Passive Detection)": {
+          "confidence": 80,
+          "interesting_entries": [
+
+          ]
+        }
+      },
+      "vulnerabilities": [
+
+      ],
+      "version": null
+    },
+    "ph-bookings-appointments-woocommerce-premium": {
+      "slug": "ph-bookings-appointments-woocommerce-premium",
+      "location": "https://www.stsupery.com/wp-content/plugins/ph-bookings-appointments-woocommerce-premium/",
+      "latest_version": null,
+      "last_updated": null,
+      "outdated": false,
+      "readme_url": null,
+      "directory_listing": null,
+      "error_log_url": null,
+      "found_by": "Urls In Homepage (Passive Detection)",
+      "confidence": 100,
+      "interesting_entries": [
+
+      ],
+      "confirmed_by": {
+        "Urls In 404 Page (Passive Detection)": {
+          "confidence": 80,
+          "interesting_entries": [
+
+          ]
+        }
+      },
+      "vulnerabilities": [
+
+      ],
+      "version": {
+        "number": "1.8.8",
+        "confidence": 80,
+        "found_by": "Readme - Stable Tag (Aggressive Detection)",
+        "interesting_entries": [
+          "https://www.stsupery.com/wp-content/plugins/ph-bookings-appointments-woocommerce-premium/readme.txt"
+        ],
+        "confirmed_by": {
+
+        }
+      }
+    },
+    "popup-maker": {
+      "slug": "popup-maker",
+      "location": "https://www.stsupery.com/wp-content/plugins/popup-maker/",
+      "latest_version": "1.20.4",
+      "last_updated": "2025-01-30T03:21:00.000Z",
+      "outdated": true,
+      "readme_url": null,
+      "directory_listing": null,
+      "error_log_url": null,
+      "found_by": "Urls In Homepage (Passive Detection)",
+      "confidence": 100,
+      "interesting_entries": [
+
+      ],
+      "confirmed_by": {
+        "Urls In 404 Page (Passive Detection)": {
+          "confidence": 80,
+          "interesting_entries": [
+
+          ]
+        }
+      },
+      "vulnerabilities": [
+
+      ],
+      "version": {
+        "number": "1.18.2",
+        "confidence": 100,
+        "found_by": "Readme - Stable Tag (Aggressive Detection)",
+        "interesting_entries": [
+          "https://www.stsupery.com/wp-content/plugins/popup-maker/readme.txt"
+        ],
+        "confirmed_by": {
+          "Readme - ChangeLog Section (Aggressive Detection)": {
+            "confidence": 50,
+            "interesting_entries": [
+              "https://www.stsupery.com/wp-content/plugins/popup-maker/readme.txt"
+            ]
+          }
+        }
+      }
+    },
+    "pt-content-views-pro": {
+      "slug": "pt-content-views-pro",
+      "location": "https://www.stsupery.com/wp-content/plugins/pt-content-views-pro/",
+      "latest_version": null,
+      "last_updated": null,
+      "outdated": false,
+      "readme_url": null,
+      "directory_listing": null,
+      "error_log_url": null,
+      "found_by": "Urls In Homepage (Passive Detection)",
+      "confidence": 100,
+      "interesting_entries": [
+
+      ],
+      "confirmed_by": {
+        "Urls In 404 Page (Passive Detection)": {
+          "confidence": 80,
+          "interesting_entries": [
+
+          ]
+        }
+      },
+      "vulnerabilities": [
+
+      ],
+      "version": {
+        "number": "5.8.4.1.1",
+        "confidence": 80,
+        "found_by": "Readme - Stable Tag (Aggressive Detection)",
+        "interesting_entries": [
+          "https://www.stsupery.com/wp-content/plugins/pt-content-views-pro/README.txt"
+        ],
+        "confirmed_by": {
+
+        }
+      }
+    },
+    "responsive-lightbox": {
+      "slug": "responsive-lightbox",
+      "location": "https://www.stsupery.com/wp-content/plugins/responsive-lightbox/",
+      "latest_version": "2.4.9",
+      "last_updated": "2024-10-21T17:21:00.000Z",
+      "outdated": true,
+      "readme_url": null,
+      "directory_listing": null,
+      "error_log_url": null,
+      "found_by": "Urls In Homepage (Passive Detection)",
+      "confidence": 100,
+      "interesting_entries": [
+
+      ],
+      "confirmed_by": {
+        "Urls In 404 Page (Passive Detection)": {
+          "confidence": 80,
+          "interesting_entries": [
+
+          ]
+        }
+      },
+      "vulnerabilities": [
+
+      ],
+      "version": {
+        "number": "2.4.6",
+        "confidence": 90,
+        "found_by": "Query Parameter (Passive Detection)",
+        "interesting_entries": [
+          "https://www.stsupery.com/wp-content/plugins/responsive-lightbox/js/front.js?ver=2.4.6"
+        ],
+        "confirmed_by": {
+          "Readme - Stable Tag (Aggressive Detection)": {
+            "confidence": 80,
+            "interesting_entries": [
+              "https://www.stsupery.com/wp-content/plugins/responsive-lightbox/readme.txt"
+            ]
+          }
+        }
+      }
+    },
+    "stsupery-integration": {
+      "slug": "stsupery-integration",
+      "location": "https://www.stsupery.com/wp-content/plugins/stsupery-integration/",
+      "latest_version": null,
+      "last_updated": null,
+      "outdated": false,
+      "readme_url": null,
+      "directory_listing": null,
+      "error_log_url": null,
+      "found_by": "Urls In Homepage (Passive Detection)",
+      "confidence": 100,
+      "interesting_entries": [
+
+      ],
+      "confirmed_by": {
+        "Urls In 404 Page (Passive Detection)": {
+          "confidence": 80,
+          "interesting_entries": [
+
+          ]
+        }
+      },
+      "vulnerabilities": [
+
+      ],
+      "version": null
+    },
+    "stsupery-shipcompliant": {
+      "slug": "stsupery-shipcompliant",
+      "location": "https://www.stsupery.com/wp-content/plugins/stsupery-shipcompliant/",
+      "latest_version": null,
+      "last_updated": null,
+      "outdated": false,
+      "readme_url": null,
+      "directory_listing": null,
+      "error_log_url": null,
+      "found_by": "Urls In Homepage (Passive Detection)",
+      "confidence": 100,
+      "interesting_entries": [
+
+      ],
+      "confirmed_by": {
+        "Urls In 404 Page (Passive Detection)": {
+          "confidence": 80,
+          "interesting_entries": [
+
+          ]
+        }
+      },
+      "vulnerabilities": [
+
+      ],
+      "version": null
+    },
+    "the-events-calendar": {
+      "slug": "the-events-calendar",
+      "location": "https://www.stsupery.com/wp-content/plugins/the-events-calendar/",
+      "latest_version": "6.10.0",
+      "last_updated": "2025-01-30T17:32:00.000Z",
+      "outdated": true,
+      "readme_url": null,
+      "directory_listing": null,
+      "error_log_url": null,
+      "found_by": "Urls In Homepage (Passive Detection)",
+      "confidence": 100,
+      "interesting_entries": [
+
+      ],
+      "confirmed_by": {
+        "Urls In 404 Page (Passive Detection)": {
+          "confidence": 80,
+          "interesting_entries": [
+
+          ]
+        }
+      },
+      "vulnerabilities": [
+
+      ],
+      "version": {
+        "number": "5.12.2",
+        "confidence": 80,
+        "found_by": "Readme - Stable Tag (Aggressive Detection)",
+        "interesting_entries": [
+          "https://www.stsupery.com/wp-content/plugins/the-events-calendar/readme.txt"
+        ],
+        "confirmed_by": {
+
+        }
+      }
+    },
+    "wp-accessibility": {
+      "slug": "wp-accessibility",
+      "location": "https://www.stsupery.com/wp-content/plugins/wp-accessibility/",
+      "latest_version": "2.1.13",
+      "last_updated": "2024-11-10T23:14:00.000Z",
+      "outdated": true,
+      "readme_url": null,
+      "directory_listing": null,
+      "error_log_url": null,
+      "found_by": "Urls In Homepage (Passive Detection)",
+      "confidence": 100,
+      "interesting_entries": [
+
+      ],
+      "confirmed_by": {
+        "Urls In 404 Page (Passive Detection)": {
+          "confidence": 80,
+          "interesting_entries": [
+
+          ]
+        }
+      },
+      "vulnerabilities": [
+
+      ],
+      "version": {
+        "number": "2.1.7",
+        "confidence": 80,
+        "found_by": "Readme - Stable Tag (Aggressive Detection)",
+        "interesting_entries": [
+          "https://www.stsupery.com/wp-content/plugins/wp-accessibility/readme.txt"
+        ],
+        "confirmed_by": {
+
+        }
+      }
+    },
+    "wp-pagenavi": {
+      "slug": "wp-pagenavi",
+      "location": "https://www.stsupery.com/wp-content/plugins/wp-pagenavi/",
+      "latest_version": "2.94.5",
+      "last_updated": "2024-12-19T01:02:00.000Z",
+      "outdated": true,
+      "readme_url": null,
+      "directory_listing": null,
+      "error_log_url": null,
+      "found_by": "Urls In Homepage (Passive Detection)",
+      "confidence": 100,
+      "interesting_entries": [
+
+      ],
+      "confirmed_by": {
+        "Urls In 404 Page (Passive Detection)": {
+          "confidence": 80,
+          "interesting_entries": [
+
+          ]
+        }
+      },
+      "vulnerabilities": [
+
+      ],
+      "version": {
+        "number": "2.94.1",
+        "confidence": 80,
+        "found_by": "Readme - Stable Tag (Aggressive Detection)",
+        "interesting_entries": [
+          "https://www.stsupery.com/wp-content/plugins/wp-pagenavi/readme.txt"
+        ],
+        "confirmed_by": {
+
+        }
+      }
+    }
+  },
+  "vuln_api": {
+    "error": "No WPScan API Token given, as a result vulnerability data has not been output.\nYou can get a free API token with 25 daily requests by registering at https://wpscan.com/register"
+  },
+  "stop_time": 1739972862,
+  "elapsed": 114,
+  "requests_done": 88,
+  "cached_requests": 7,
+  "data_sent": 34630,
+  "data_sent_humanised": "33.818 KB",
+  "data_received": 1958493,
+  "data_received_humanised": "1.868 MB",
+  "used_memory": 283213824,
+  "used_memory_humanised": "270.094 MB"
+}
